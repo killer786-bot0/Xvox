@@ -1,0 +1,27 @@
+name: Build AutoVox VST3
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release --parallel
+
+      - name: Package VST3
+        run: |
+          Compress-Archive -Path "build/AutoVox_artefacts/Release/VST3/AutoVox.vst3" -DestinationPath "AutoVox-Windows-VST3.zip"
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutoVox-Windows-VST3
+          path: AutoVox-Windows-VST3.zip
